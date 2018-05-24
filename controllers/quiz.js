@@ -159,49 +159,46 @@ exports.check = (req, res, next) => {
 };
 
 
-// GET /quizzes/randomplay
-exports.randomPlay = (req, res, next) => {
+// GET /quizzes/:quizId/random_play
+exports.randomplay = (req, res, next) => {
 
-    // guardo en req.session.resolved las preguntas que he contestado
-    req.session.resolved = req.session.resolved || [];
+    req.session.randomPlay = req.session.randomPlay || [];
 
-    Sequelize.Promise.resolve()
-        .then(() => {
-            // condicion: que no esten en el array de preguntas que ya he contestado
-            const whereOpt = {'id': {[Sequelize.Op.notIn]: req.session.resolved}};
+    var score = req.session.randomPlay.lenght || 0;
 
-            // cojo las preguntas que no he contestado todavia
-            return models.quiz.count({where: whereOpt})
-            // count = num de preguntas que no he contestado todavia
-                .then(count => {
-                    // score = num de preguntas que he contestado ya (correctamente)
-                    let score = req.session.resolved.length;
-                    if (count === 0) {
-                        delete req.session.resolved;
-                        res.render('quizzes/random_nomore', {score});
-                    }
-                    let aleat = Math.floor(Math.random() * count);
+    const whereOpt = {id: {[Sequelize.Op.notIn] : req.session.randomPlay}} ;
 
-                    return models.quiz.findAll({
-                        where: whereOpt,
-                        offset: aleat,
-                        limit: 1
-                    })
-                        .then(quizzes => {
-                            return quizzes[0];
-                        });
+    models.quiz.count({where:whereOpt})
+        .then(count => {
+
+            return models.quiz.findAll({
+                where: whereOpt,
+                offset: Math.floor(Math.random()*count),
+                limit:1
+            })
+                .then(quizzes => {
+                    return quizzes[0];
                 })
-                .catch(error => {
-                    req.flash('error', `Error deleting the quiz: ${error.message}`);
-                    next(error);
-                });
         })
         .then(quiz => {
-            console.log(`QUIZ: ${quiz}`);
-            let score = req.session.resolved.length;
-            res.render('quizzes/random_play', {quiz, score});
-        });
+            if(quiz === undefined) {
+
+                req.session.randomPlay = [];
+                res.render('quizzes/random_nomore', {
+                    score: score
+                });
+
+            } else {
+
+                res.render('quizzes/random_play', {
+                    quiz: quiz,
+                    score: score
+                });
+            }
+        })
+        .catch(error => next(error));
 };
+
 
 // GET /quizzes/randomcheck/:quizId?answer=respuesta
 exports.randomcheck = (req, res, next) => {
