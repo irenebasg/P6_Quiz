@@ -128,6 +128,20 @@ router.get('/quizzes/:quizId(\\d+)/play',
 router.get('/quizzes/:quizId(\\d+)/check',
 	quizController.check);
 
+router.get('/quizzes/randomplay',          quizController.randomplay);
+router.get('/quizzes/randomcheck/:quizId', quizController.randomcheck);
+
+
+// Routes for the resource /tips
+router.get('/quizzes/:quizId/tips/:tipId/edit',
+    sessionController.loginRequired,
+    tipController.adminOrAuthorRequired,
+    tipController.edit);
+router.put('/quizzes/:quizId/tips/:tipId',
+    sessionController.loginRequired,
+    tipController.adminOrAuthorRequired,
+    tipController.update);
+
 
 
 router.post('/quizzes/:quizId(\\d+)/tips',     

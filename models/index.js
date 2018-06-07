@@ -60,5 +60,7 @@ user.belongsToMany(quiz, {
     foreignKey: 'userId',
     otherKey: 'quizId'
 });
+user.hasMany(tip, {foreignKey: 'authorId'});
+tip.belongsTo(user, {as: 'author', foreignKey: 'authorId'});
 
 module.exports = sequelize;
