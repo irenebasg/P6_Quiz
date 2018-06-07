@@ -30,16 +30,13 @@
     "express-generator": "^4.15.5",
     "express-partials": "^0.3.0",
     "express-session": "^1.15.6",
+    "heroku": "^7.0.58",
     "method-override": "^2.3.10",
     "morgan": "~1.9.0",
     "pg": "^7.4.0",
     "sequelize": "^4.37.5",
-
-    "sequelize-cli": "^4.0.0",
-    "serve-favicon": "~2.4.5",
-
+    "sequelize-cli": "^3.2.0",
     "serve-favicon": "^2.4.5",
-
     "supervisor": "^0.12.0"
   },
   "devDependencies": {
